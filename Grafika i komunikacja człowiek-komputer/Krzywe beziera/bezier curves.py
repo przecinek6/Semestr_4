@@ -40,6 +40,7 @@ for point_set in punkty:
     plt.plot(*zip(*punkty_krzywej), color='blue')
     plt.scatter(*zip(*point_set), color='red')
 
+
 plt.title("Inicjały z Krzywych Béziera")
 plt.xlabel("X")
 plt.ylabel("Y")
