@@ -312,6 +312,7 @@ while run:
                 valid_moves = []
                 black_options = check_options(black_pieces, black_position, 'black')
                 white_options = check_options(white_pieces, white_position, 'white')
+
     if winner != '':
         gameover = True
         drawGameover()
