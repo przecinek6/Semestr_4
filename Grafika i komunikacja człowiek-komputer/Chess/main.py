@@ -1,6 +1,7 @@
-from loadPices import *
+import pygame
+from loadPieces import *
 
-# constans
+# Constants
 width = 736
 height = 736
 screen = pygame.display.set_mode([width, height])
@@ -223,6 +224,28 @@ def drawGameover():
     screen.blit(font.render(f'{winner} won the game!', True, 'white'), (210, 210))
     screen.blit(font.render(f'Press ENTER to Restart!', True, 'white'), (210, 240))
 
+def isCheck(color):
+    if color == 'white':
+        king_index = white_pieces.index('king')
+        king_location = white_position[king_index]
+        for i in range(len(black_options)):
+            if king_location in black_options[i]:
+                return True
+    else:
+        king_index = black_pieces.index('king')
+        king_location = black_position[king_index]
+        for i in range(len(white_options)):
+            if king_location in white_options[i]:
+                return True
+    return False
+
+def resolveCheck(color):
+    if isCheck(color):
+        valid_moves = checkValidMoves()
+        if len(valid_moves) == 0:
+            return True
+    return False
+
 black_options = moveOptions(black_pieces, black_position, 'black')
 white_options = moveOptions(white_pieces, white_position, 'white')
 
@@ -250,18 +273,29 @@ while run:
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and not gameover:
             click_coords = (event.pos[0] // 92, event.pos[1] // 92)
 
-            # white turn
+            # White turn
             if turn <= 1:
                 if click_coords in white_position:
                     selection = white_position.index(click_coords)
                     if turn == 0:
                         turn = 1
                 if click_coords in valid_moves and selection != 100:
+                    old_position = white_position[selection]
                     white_position[selection] = click_coords
+                    if isCheck('white'):
+                        if resolveCheck('white'):
+                            winner = 'black'
+                            gameover = True
+                            break
+                        else:
+                            white_position[selection] = old_position
+                            continue
                     if click_coords in black_position:
                         black_piece = black_position.index(click_coords)
                         if black_pieces[black_piece] == 'king':
                             winner = 'white'
+                            gameover = True
+                            break
                         black_pieces.pop(black_piece)
                         black_position.pop(black_piece)
                     black_options = moveOptions(black_pieces, black_position, 'black')
@@ -270,18 +304,29 @@ while run:
                     selection = 100
                     valid_moves = []
 
-            # black turn
+            # Black turn
             if turn > 1:
                 if click_coords in black_position:
                     selection = black_position.index(click_coords)
                     if turn == 2:
                         turn = 3
                 if click_coords in valid_moves and selection != 100:
+                    old_position = black_position[selection]
                     black_position[selection] = click_coords
+                    if isCheck('black'):
+                        if resolveCheck('black'):
+                            winner = 'white'
+                            gameover = True
+                            break
+                        else:
+                            black_position[selection] = old_position
+                            continue
                     if click_coords in white_position:
                         white_piece = white_position.index(click_coords)
                         if white_pieces[white_piece] == 'king':
                             winner = 'black'
+                            gameover = True
+                            break
                         white_pieces.pop(white_piece)
                         white_position.pop(white_piece)
                     black_options = moveOptions(black_pieces, black_position, 'black')
@@ -312,4 +357,5 @@ while run:
         gameover = True
         drawGameover()
     pygame.display.flip()
+
 pygame.quit()
