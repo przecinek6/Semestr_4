@@ -1,10 +1,10 @@
-def lagrange(x_coord, y_coord, x):
+def lagrange(x_points, y_points, x):
     sum = 0
-    for i in range ( len(x_points) ):
-        tmp = y_coord[i]
-        for j in range ( len(x_points) ):
+    for i in range (len(x_points)):
+        tmp = y_points[i]
+        for j in range (len(x_points)):
             if j != i:
-                tmp *= (x - x_coord[j]) / (x_coord[i] - x_coord[j])
+                tmp *= (x - x_points[j]) / (x_points[i] - x_points[j])
         sum += tmp
     return sum
 
