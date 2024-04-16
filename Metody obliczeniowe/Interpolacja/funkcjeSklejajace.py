@@ -76,7 +76,6 @@ def rozwiazanie_funkcje_sklejane(x, a, x_points):
     sum = round(sum, 3)
     return sum
 
-xypoints = [ 0,  1, 2, 3, 4]
 x_points = [-4, -2, 0, 2, 4]
 y_points = [1043, 59, 3, 59, 947]
 x = 3
