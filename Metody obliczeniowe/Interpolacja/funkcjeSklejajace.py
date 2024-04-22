@@ -1,12 +1,11 @@
 def generuj_wiersz(x_points, ktory_wiersz):
     wiersz = []
-    for i in range(len(x_points)):
+
+    for i in range(4):
             wiersz.append(x_points[ktory_wiersz] ** i)
 
-    for i in range(ktory_wiersz - 1):
-        tmp = (x_points[ktory_wiersz] - x_points[i - 3]) ** 3
-        if tmp != 0:
-            wiersz.append(tmp)
+    for i in range(1, ktory_wiersz + 1):
+        wiersz.append((x_points[ktory_wiersz] - x_points[i]) ** 3)
 
     while len(wiersz) < len(x_points) + 2:
         wiersz.append(0)
@@ -17,13 +16,11 @@ def pochodna(x_points, ktory_wiersz):
     wiersz = []
     wiersz.append(0)
 
-    for i in range( len(x_points) - 1):
+    for i in range(3):
         wiersz.append( (i+1) * (x_points[ktory_wiersz] ** (i)))
 
-    for i in range(ktory_wiersz - 1):
-        tmp = 3 * ((x_points[ktory_wiersz] - x_points[i - 3]) ** 2)
-        if tmp != 0:
-            wiersz.append(tmp)
+    for i in range(1, ktory_wiersz + 1):
+        wiersz.append(3 * ((x_points[ktory_wiersz] - x_points[i]) ** 2))
 
     while len(wiersz) < len(x_points) + 2:
         wiersz.append(0)
@@ -61,19 +58,19 @@ def eliminacja_gaussa(macierz, y_points):
         X[i] = y_points[i] / macierz[i][i]
         for j in range(i - 1, -1, -1):
             y_points[j] -= macierz[j][i] * X[i]
-    X = [round(x, 3) for x in X]
+    #X = [round(x, 3) for x in X]
     return X
 
 def rozwiazanie_funkcje_sklejane(x, a, x_points):
     sum = 0
-    for i in range(len(a) - 2):
+    for i in range(4):
         sum += a[i] * (x**i)
 
     for i in range(1, len(x_points) - 1):
         if x >= x_points[i]:
-            sum += a[len(x_points) - 2 + i] * (x - x_points[i])**3
+            sum += a[i + 3] * (x - x_points[i])**3
 
-    sum = round(sum, 3)
+    #sum = round(sum, 3)
     return sum
 
 x_points = [-4, -2, 0, 2, 4]
