@@ -5,10 +5,11 @@ def calka(x):
 
 def metoda_trapezow(a, b, n):
     h = (b - a) / n
+    xi = [a + (i/n) * (b-a) for i in range(1, n)]
     suma = (calka(a) + calka(b)) / 2
 
     for i in range(1, n):
-        suma += calka(a + i * h)
+        suma += calka(xi[i - 1])
 
     return suma * h
 
