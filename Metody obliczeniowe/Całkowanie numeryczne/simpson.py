@@ -1,7 +1,7 @@
 import math
 
 def calka(x):
-    return math.sin((0.7 * x) + 0.1) / 1.3 + math.cos(x**2 + 0.2)
+    return math.sin(0.7 * x + 0.1) / (1.3 + math.cos(x**2 + 0.2))
 
 def metoda_simpsona(a, b, n):
     xi = [a + (i/n) * (b-a) for i in range(0, n + 1)]
