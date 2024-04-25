@@ -2,9 +2,6 @@ import math
 import numpy as np
 
 def wyznacz_wezly_wagi(n):
-    wezly = []
-    wagi = []
-
     pom = np.polynomial.legendre.leggauss(n)
     wezly = pom[0]
     wagi = pom[1]
