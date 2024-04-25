@@ -1,7 +1,7 @@
 import math
 
 def calka(x):
-    return math.sin((0.7 * x) + 0.1) / 1.3 + math.cos(x**2 + 0.2)
+    return math.sin(0.7 * x + 0.1) / (1.3 + math.cos(x**2 + 0.2))
 
 def metoda_trapezow(a, b, n):
     h = (b - a) / n
