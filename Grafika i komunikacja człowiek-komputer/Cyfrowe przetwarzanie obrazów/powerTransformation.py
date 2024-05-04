@@ -13,9 +13,9 @@ def potegowa(image, gamma):
             b = int((b / 255.0) ** gamma * 255)
             resultImage.putpixel((i, j), (r, g, b))
 
-    resultImage.save("resultPotegowa.jpg")
+    resultImage.show()
 
 
-image = Image.open("bialystok.jpg")
+image = Image.open("Images/bialystok.jpg")
 
 potegowa(image, 0.5)
