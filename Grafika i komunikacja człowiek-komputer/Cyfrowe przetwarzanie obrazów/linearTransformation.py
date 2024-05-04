@@ -13,7 +13,7 @@ def rozjasnienie(image, percent):
             b = max(0, min(255, b * ((percent / 100) + 1)))
             resultImage.putpixel((i, j), (int(r), int(g), int(b)))
 
-    resultImage.save("rozjasnienie.jpg")
+    resultImage.show()
 
 def przyciemnienie(image, percent):
     resultImage = Image.new("RGB", (image.width, image.height))
@@ -28,7 +28,7 @@ def przyciemnienie(image, percent):
             b = max(0, min(255, b * (1 - (percent / 100))))
             resultImage.putpixel((i, j), (int(r), int(g), int(b)))
 
-    resultImage.save("przyciemnienie.jpg")
+    resultImage.show()
 
 def negatyw(image):
     resultImage = Image.new("RGB", (image.width, image.height))
@@ -43,10 +43,10 @@ def negatyw(image):
             b = 255 - b
             resultImage.putpixel((i, j), (r, g, b))
 
-    resultImage.save("negatyw.jpg")
+    resultImage.show()
 
-image = Image.open("bialystok.jpg")
+image = Image.open("Images/bialystok.jpg")
 
-negatyw(image)
 rozjasnienie(image, 100)
 przyciemnienie(image, 70)
+negatyw(image)
