@@ -47,6 +47,6 @@ def negatyw(image):
 
 image = Image.open("bialystok.jpg")
 
-# negatyw(image)
-# rozjasnienie(image, 100)
-# przyciemnienie(image, 70)
+negatyw(image)
+rozjasnienie(image, 100)
+przyciemnienie(image, 70)
