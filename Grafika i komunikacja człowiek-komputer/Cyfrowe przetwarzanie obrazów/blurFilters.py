@@ -19,7 +19,6 @@ def box_filter(image, size):
                     b_total += pixel[2]
                     count += 1
 
-            # Calculate the average value for each channel
             r_avg = r_total // count
             g_avg = g_total // count
             b_avg = b_total // count
