@@ -1,5 +1,7 @@
 from PIL import Image
 
+contrastBool = False
+
 def adjust_contrast(image, contrast):
     resultImage = Image.new("RGB", (image.width, image.height))
 
@@ -20,8 +22,4 @@ def adjust_contrast(image, contrast):
 
             resultImage.putpixel((x, y), tuple(adjusted_pixel))
 
-    resultImage.show()
-
-image = Image.open("Images/flower3.png")
-
-adjust_contrast(image, -50)
+    return resultImage
