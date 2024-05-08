@@ -1,5 +1,8 @@
 from PIL import Image
 
+rozjasnienieBool = False
+przyciemnienieBool = False
+
 def rozjasnienie(image, percent):
     resultImage = Image.new("RGB", (image.width, image.height))
 
@@ -13,7 +16,7 @@ def rozjasnienie(image, percent):
             b = max(0, min(255, b * ((percent / 100) + 1)))
             resultImage.putpixel((i, j), (int(r), int(g), int(b)))
 
-    resultImage.show()
+    return resultImage
 
 def przyciemnienie(image, percent):
     resultImage = Image.new("RGB", (image.width, image.height))
@@ -28,7 +31,7 @@ def przyciemnienie(image, percent):
             b = max(0, min(255, b * (1 - (percent / 100))))
             resultImage.putpixel((i, j), (int(r), int(g), int(b)))
 
-    resultImage.show()
+    return resultImage
 
 def negatyw(image):
     resultImage = Image.new("RGB", (image.width, image.height))
@@ -43,10 +46,4 @@ def negatyw(image):
             b = 255 - b
             resultImage.putpixel((i, j), (r, g, b))
 
-    resultImage.show()
-
-image = Image.open("Images/bialystok.jpg")
-
-rozjasnienie(image, 100)
-przyciemnienie(image, 70)
-negatyw(image)
+    return resultImage
