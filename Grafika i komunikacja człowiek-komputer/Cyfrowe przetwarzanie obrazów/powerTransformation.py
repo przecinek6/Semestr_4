@@ -1,5 +1,7 @@
 from PIL import Image
 
+powerTransformationBool = False
+
 def potegowa(image, gamma):
     resultImage = Image.new("RGB", (image.width, image.height))
 
@@ -13,9 +15,4 @@ def potegowa(image, gamma):
             b = int((b / 255.0) ** gamma * 255)
             resultImage.putpixel((i, j), (r, g, b))
 
-    resultImage.show()
-
-
-image = Image.open("Images/bialystok.jpg")
-
-potegowa(image, 0.5)
+    return resultImage
