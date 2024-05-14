@@ -4,7 +4,7 @@ def min_filter(image, size):
     width, height = image.size
     filtered_image = Image.new("RGB", (width, height))
 
-    half_size = size // 2
+    half_size = int(size) // 2
 
     for x in range(width):
         for y in range(height):
@@ -20,13 +20,13 @@ def min_filter(image, size):
 
             filtered_image.putpixel((x, y), (min_r, min_g, min_b))
 
-    filtered_image.show()
+    return filtered_image
 
 def max_filter(image, size):
     width, height = image.size
     filtered_image = Image.new("RGB", (width, height))
 
-    half_size = size // 2
+    half_size = int(size) // 2
 
     for x in range(width):
         for y in range(height):
@@ -42,7 +42,7 @@ def max_filter(image, size):
 
             filtered_image.putpixel((x, y), (max_r, max_g, max_b))
 
-    filtered_image.show()
+    return filtered_image
 
 def median_filter(image, size):
     from statistics import median
@@ -50,7 +50,7 @@ def median_filter(image, size):
     width, height = image.size
     filtered_image = Image.new("RGB", (width, height))
 
-    half_size = size // 2
+    half_size = int(size) // 2
 
     for x in range(width):
         for y in range(height):
@@ -68,10 +68,4 @@ def median_filter(image, size):
 
             filtered_image.putpixel((x, y), (int(median_r), int(median_g), int(median_b)))
 
-    filtered_image.show()
-
-
-image = Image.open("Images/filters.png")
-# min_filter(image, 8)
-# max_filter(image, 8)
-median_filter(image, 8)
+    return filtered_image
