@@ -28,27 +28,4 @@ def filterFunction(image, filter):
             new_b = min(max(int(sum_b), 0), 255)
 
             filtered_image.putpixel((x, y), (new_r, new_g, new_b))
-    filtered_image.show()
-
-
-image = Image.open("Images/filters.png")
-
-robertsHorizontal = [[0, 0, 0], [0, 1, -1], [0, 0, 0]]
-robertsVertical = [[0, 0, 0], [0, 1, 0], [0, -1, 0]]
-
-prewittHorizontal = [[1, 1, 1], [0, 0, 0], [-1, -1, -1]]
-prewittVertical = [[1, 0, -1], [1, 0, -1], [1, 0, -1]]
-
-sobelHorizontal = [[1, 2, 1], [0, 0, 0], [-1, -2, -1]]
-sobelVertical = [[1, 0, -1], [2, 0, -2],[1, 0, -1]]
-
-laplace = [[-1, -1, -1], [-1, 8, -1],[-1, -1, -1]]
-
-
-# filterFunction(image, robertssHorizontal)
-# filterFunction(image, robertsVertical)
-# filterFunction(image, prewittHorizontal)
-# filterFunction(image, prewittVertical)
-# filterFunction(image, sobelHorizontal)
-# filterFunction(image, sobelVertical)
-filterFunction(image, laplace)
+    return filtered_image
