@@ -15,8 +15,32 @@ from mixingImage import *
 image = None
 image1 = None
 image2 = None
+history_undo = []
+history_redo = []
+boolUndo = False
+
+def undo():
+    global history_undo, history_redo, boolUndo
+
+    if len(history_undo) != 0:
+        history_redo.append(history_undo[-1])
+        history_undo.pop()
+        image = history_undo[-1]
+        boolUndo = True
+        image_update(image)
+        boolUndo = False
+
+def redo():
+    global history_undo
+
+    if len(history_redo) != 0:
+        image = history_redo[-1]
+        image_update(image)
+        history_redo.pop()
 
 def image_update(image):
+    global history_undo
+
     # Getter image_frame size
     frame_width = image_frame.winfo_width()
     frame_height = image_frame.winfo_height()
@@ -28,6 +52,9 @@ def image_update(image):
     canvas.config(width=image.width, height=image.height)
     canvas.create_image(0, 0, anchor=tkinter.NW, image=photo)
     canvas.image = photo
+
+    if boolUndo == False:
+        history_undo.append(image.copy())
 
 def open_file():
     global image
@@ -576,8 +603,8 @@ file_menu.add_command(label="Zapisz plik", command=save_file)
 # Edycja menu
 edit_menu = tkinter.Menu(menu, tearoff=0)
 menu.add_cascade(label="Edycja", menu=edit_menu)
-edit_menu.add_command(label="Cofnij zmiany")
-edit_menu.add_command(label="Przywróć zmiany")
+edit_menu.add_command(label="Cofnij zmiany", command=undo)
+edit_menu.add_command(label="Przywróć zmiany", command=redo)
 
 # Tryby menu
 modes_menu = tkinter.Menu(menu, tearoff=0)
