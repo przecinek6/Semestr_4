@@ -13,7 +13,6 @@ from mixingImage import *
 
 # Globbal variables
 image = None
-image1 = None
 image2 = None
 history_undo = []
 history_redo = []
@@ -99,7 +98,7 @@ def linear_transformation(option):
                                          command=slider_event)
         slider.pack()
 
-        text_var = tkinter.StringVar(value="50")
+        text_var = tkinter.StringVar(value="50.0")
 
         value_label = customtkinter.CTkLabel(toolbox_workspace_frame, textvariable=text_var, fg_color="#464646",
                                              width=50)
@@ -116,7 +115,7 @@ def linear_transformation(option):
                                          command=slider_event)
         slider.pack()
 
-        text_var = tkinter.StringVar(value="50")
+        text_var = tkinter.StringVar(value="50.0")
 
         value_label = customtkinter.CTkLabel(toolbox_workspace_frame, textvariable=text_var, fg_color="#464646",
                                              width=50)
@@ -198,7 +197,7 @@ def contrast():
                                      command=slider_event)
     slider.pack()
 
-    text_var = tkinter.StringVar(value="0")
+    text_var = tkinter.StringVar(value="0.0")
 
     value_label = customtkinter.CTkLabel(toolbox_workspace_frame, textvariable=text_var, fg_color="#464646",
                                          width=50)
@@ -234,7 +233,7 @@ def blur_filter():
                                      command=slider_event)
     slider.pack()
 
-    text_var = tkinter.StringVar(value="5")
+    text_var = tkinter.StringVar(value="5.0")
 
     value_label = customtkinter.CTkLabel(toolbox_workspace_frame, textvariable=text_var, fg_color="#464646",
                                          width=50)
@@ -316,7 +315,7 @@ def static_filters(option):
                                      command=slider_event)
     slider.pack()
 
-    text_var = tkinter.StringVar(value="5")
+    text_var = tkinter.StringVar(value="5.0")
 
     value_label = customtkinter.CTkLabel(toolbox_workspace_frame, textvariable=text_var, fg_color="#464646",
                                          width=50)
@@ -355,7 +354,7 @@ def one_image_mode():
 
     # Grid
     main_area.columnconfigure(0, weight=10)
-    main_area.columnconfigure(1, weight=1)
+    main_area.columnconfigure(1, weight=0)
     main_area.grid_rowconfigure(0, weight=10)
     main_area.grid_rowconfigure(1, weight=1)
 
@@ -389,6 +388,22 @@ def one_image_mode():
     canvas = customtkinter.CTkCanvas(image_frame, bg="#262626", highlightthickness=0)
     canvas.pack(expand=True)
 
+    # Disable effects for two images
+    effects_menu.entryconfig("Transformacja liniowa", state="active")
+    effects_menu.entryconfig("Transformacja potęgowa", state="active")
+    effects_menu.entryconfig("Kontrast", state="active")
+    effects_menu.entryconfig("Histogram", state="active")
+    effects_menu.entryconfig("Filtr rozmywający", state="active")
+    effects_menu.entryconfig("Filtr wyostrzający", state="active")
+    effects_menu.entryconfig("Filtry statyczne", state="active")
+    effects_menu.entryconfig("Mieszanie obrazów", state="disable")
+
+    # Set the image_frame size based on the current window dimensions (bug fix)
+    app.update()
+    width = main_area.winfo_width()
+    height = main_area.winfo_height()
+    image_frame.configure(width=width - 200, height=height - 200)
+
 def image_update_two_mode_1(image):
     # Getter image_frame size
     frame_width = image1_frame.winfo_width()
@@ -416,11 +431,11 @@ def image_update_two_mode_2(image):
     canvas2.image = photo
 
 def open_file_two_mode_1():
-    global image1
+    global image
     file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg;*.jpeg;*.png;*.bmp;*.gif")])
     if file_path:
-        image1 = Image.open(file_path)
-        image_update_two_mode_1(image1)
+        image = Image.open(file_path)
+        image_update_two_mode_1(image)
 
 def open_file_two_mode_2():
     global image2
@@ -430,76 +445,76 @@ def open_file_two_mode_2():
         image_update_two_mode_2(image2)
 
 def transparency_fun():
-    global image1
+    global image
     value = slider.get()
-    image1 = transparency(image1, image2, value)
-    image_update_two_mode_1(image1)
+    image = transparency(image, image2, value)
+    image_update_two_mode_1(image)
 
 def mixing_images(option):
-    global image1, image2, slider, text_var
+    global image, image2, slider, text_var
 
     for widget in toolbox_workspace_frame.winfo_children():
         widget.destroy()
 
     if option == "Suma":
-        image1 = additiveMode(image1, image2)
-        image_update_two_mode_1(image1)
+        image = additiveMode(image, image2)
+        image_update_two_mode_1(image)
 
     if option == "Odejmowanie":
-        image1 = subtractiveMode(image1, image2)
-        image_update_two_mode_1(image1)
+        image = subtractiveMode(image, image2)
+        image_update_two_mode_1(image)
 
     if option == "Różnica":
-        image1 = subtractiveMode(image1, image2)
-        image_update_two_mode_1(image1)
+        image = subtractiveMode(image, image2)
+        image_update_two_mode_1(image)
 
     if option == "Mnożenie":
-        image1 = multiplyMode(image1, image2)
-        image_update_two_mode_1(image1)
+        image = multiplyMode(image, image2)
+        image_update_two_mode_1(image)
 
     if option == "Mnożenie odwrotności":
-        image1 = screenMode(image1, image2)
-        image_update_two_mode_1(image1)
+        image = screenMode(image, image2)
+        image_update_two_mode_1(image)
 
     if option == "Negacja":
-        image1 = negationMode(image1, image2)
-        image_update_two_mode_1(image1)
+        image = negationMode(image, image2)
+        image_update_two_mode_1(image)
 
     if option == "Ciemniejsze":
-        image1 = darkenMode(image1, image2)
-        image_update_two_mode_1(image1)
+        image = darkenMode(image, image2)
+        image_update_two_mode_1(image)
 
     if option == "Jaśniejsze":
-        image1 = lightenMode(image1, image2)
-        image_update_two_mode_1(image1)
+        image = lightenMode(image, image2)
+        image_update_two_mode_1(image)
 
     if option == "Wyłączenie":
-        image1 = exclusionMode(image1, image2)
-        image_update_two_mode_1(image1)
+        image = exclusionMode(image, image2)
+        image_update_two_mode_1(image)
 
     if option == "Nakładka":
-        image1 = overlayMode(image1, image2)
-        image_update_two_mode_1(image1)
+        image = overlayMode(image, image2)
+        image_update_two_mode_1(image)
 
     if option == "Ostre światło":
-        image1 = hardLightMode(image1, image2)
-        image_update_two_mode_1(image1)
+        image = hardLightMode(image, image2)
+        image_update_two_mode_1(image)
 
     if option == "Łagodne światło":
-        image1 = softLightMode(image1, image2)
-        image_update_two_mode_1(image1)
+        image = softLightMode(image, image2)
+        image_update_two_mode_1(image)
 
     if option == "Rozcieńczenie":
-        image1 = colorDodgeMode(image1, image2)
-        image_update_two_mode_1(image1)
+        image = colorDodgeMode(image, image2)
+        image_update_two_mode_1(image)
 
     if option == "Wypalanie":
-        image1 = colorBurnMode(image1, image2)
-        image_update_two_mode_1(image1)
+        image = colorBurnMode(image, image2)
+        image_update_two_mode_1(image)
 
     if option == "Reflect mode":
-        image1 = reflectMode(image1, image2)
-        image_update_two_mode_1(image1)
+        image = reflectMode(image, image2)
+        image_update_two_mode_1(image)
 
     if option == "Przezroczystość":
         text_label = customtkinter.CTkLabel(toolbox_workspace_frame, text="Wybierz stopień przenikania:")
@@ -580,6 +595,16 @@ def two_image_mode():
     # Second image canvas
     canvas2 = customtkinter.CTkCanvas(image2_frame, bg="#262626", highlightthickness=0)
     canvas2.pack(expand=True)
+
+    # Disable effects for one image
+    effects_menu.entryconfig("Transformacja liniowa", state="active")
+    effects_menu.entryconfig("Transformacja potęgowa", state="active")
+    effects_menu.entryconfig("Kontrast", state="active")
+    effects_menu.entryconfig("Histogram", state="active")
+    effects_menu.entryconfig("Filtr rozmywający", state="active")
+    effects_menu.entryconfig("Filtr wyostrzający", state="active")
+    effects_menu.entryconfig("Filtry statyczne", state="active")
+    effects_menu.entryconfig("Mieszanie obrazów", state="active")
 
 # Drop down menu function
 def create_dropdown_menu(menu, options, command):
