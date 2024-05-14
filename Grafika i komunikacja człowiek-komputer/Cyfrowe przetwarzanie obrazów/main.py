@@ -1,31 +1,34 @@
-import tkinter as tk
-from tkinter import filedialog
+import tkinter
 import customtkinter
 from PIL import ImageTk
+from tkinter import filedialog
 from linearTransformation import *
 from powerTransformation import *
 from contrast import *
 from histogram import *
+from blurFilters import *
+from sharpeningFilters import *
+from staticFilters import *
+from mixingImage import *
 
-customtkinter.set_appearance_mode("#1e1e1e")
-customtkinter.set_default_color_theme("blue")
-
-app = customtkinter.CTk()
-app.geometry("1280x720")
-app.title("Edytor obrazów")
-
-# Zmienna przechowująca obraz
+# Globbal variables
 image = None
+image1 = None
+image2 = None
 
 def image_update(image):
-    # Przeskalowanie obrazka do maksymalnej szerokości 1000 px
-    image.thumbnail((1000, 1000))
+    # Getter image_frame size
+    frame_width = image_frame.winfo_width()
+    frame_height = image_frame.winfo_height()
+
+    # Sizing image to image_frame
+    image.thumbnail((frame_width, frame_height))
+
     photo = ImageTk.PhotoImage(image)
     canvas.config(width=image.width, height=image.height)
-    canvas.create_image(0, 0, anchor=tk.NW, image=photo)
-    canvas.image = photo  # to avoid garbage collection
+    canvas.create_image(0, 0, anchor=tkinter.NW, image=photo)
+    canvas.image = photo
 
-# Funkcja do otwierania obrazka
 def open_file():
     global image
     file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg;*.jpeg;*.png;*.bmp;*.gif")])
@@ -42,161 +45,600 @@ def save_file():
         if file_path:
             image.save(file_path)
 
-def bool_reset():
-    global rozjasnienieBool
-    global przyciemnienieBool
-    global powerTransformationBool
-    global contrastBool
+def linear_brightening():
+    global image
+    value = slider.get()
+    image = rozjasnienie(image, value)
+    image_update(image)
 
-    rozjasnienieBool = False
-    przyciemnienieBool = False
-    powerTransformationBool = False
-    contrastBool = False
-
-    slider_unpack()
+def linear_darkening():
+    global image
+    value = slider.get()
+    image = przyciemnienie(image, value)
+    image_update(image)
 
 def linear_transformation(option):
-    bool_reset()
-    global image
-    global rozjasnienieBool
-    global przyciemnienieBool
+    global image, slider, text_var
+    # global toolbox_workspace_frame
+
+    for widget in toolbox_workspace_frame.winfo_children():
+        widget.destroy()
 
     if option == "Rozjaśnienie":
-        rozjasnienieBool = True
-        slider_pack()
+        text_label = customtkinter.CTkLabel(toolbox_workspace_frame, text="O ile procent chcesz rozjaśnić:")
+        text_label.pack(pady=20)
+
+        slider = customtkinter.CTkSlider(toolbox_workspace_frame, from_=0, to=100, number_of_steps=100,
+                                         command=slider_event)
+        slider.pack()
+
+        text_var = tkinter.StringVar(value="50")
+
+        value_label = customtkinter.CTkLabel(toolbox_workspace_frame, textvariable=text_var, fg_color="#464646",
+                                             width=50)
+        value_label.pack(pady=10)
+
+        button = customtkinter.CTkButton(toolbox_workspace_frame, text="Zastosuj", command=linear_brightening)
+        button.pack()
 
     if option == "Przyciemnienie":
-        przyciemnienieBool = True
-        slider_pack()
+        text_label = customtkinter.CTkLabel(toolbox_workspace_frame, text="O ile procent chcesz przyciemnić:")
+        text_label.pack(pady=20)
+
+        slider = customtkinter.CTkSlider(toolbox_workspace_frame, from_=0, to=100, number_of_steps=100,
+                                         command=slider_event)
+        slider.pack()
+
+        text_var = tkinter.StringVar(value="50")
+
+        value_label = customtkinter.CTkLabel(toolbox_workspace_frame, textvariable=text_var, fg_color="#464646",
+                                             width=50)
+        value_label.pack(pady=10)
+
+        button = customtkinter.CTkButton(toolbox_workspace_frame, text="Zastosuj", command=linear_darkening)
+        button.pack()
 
     if option == "Negatyw":
         image = negatyw(image)
         image_update(image)
 
+def power_transformation_fun():
+    global image
+    value = slider.get()
+    image = potegowa(image, value)
+    image_update(image)
+
 def power_transformation(option):
-    bool_reset()
-    global powerTransformationBool
-    powerTransformationBool = True
+    global slider, text_var
+
+    for widget in toolbox_workspace_frame.winfo_children():
+        widget.destroy()
 
     if option == "Rozjaśnienie":
-        slider_pack(0, 1)
+        text_label = customtkinter.CTkLabel(toolbox_workspace_frame, text="Ile chcesz rozjaśnić:")
+        text_label.pack(pady=20)
+
+        slider = customtkinter.CTkSlider(toolbox_workspace_frame, from_=0, to=1, number_of_steps=100,
+                                         command=slider_event)
+        slider.pack()
+
+        text_var = tkinter.StringVar(value="0.5")
+
+        value_label = customtkinter.CTkLabel(toolbox_workspace_frame, textvariable=text_var, fg_color="#464646",
+                                             width=50)
+        value_label.pack(pady=10)
+
+        text_var.trace_add("write", lambda *args: round_value(2))
+
+        button = customtkinter.CTkButton(toolbox_workspace_frame, text="Zastosuj", command=power_transformation_fun)
+        button.pack()
 
     if option == "Przyciemnienie":
-        slider_pack(1, 2)
+        text_label = customtkinter.CTkLabel(toolbox_workspace_frame, text="Ile chcesz przyciemnić:")
+        text_label.pack(pady=20)
+
+        slider = customtkinter.CTkSlider(toolbox_workspace_frame, from_=1, to=2, number_of_steps=100,
+                                         command=slider_event)
+        slider.pack()
+
+        text_var = tkinter.StringVar(value="1.5")
+
+        value_label = customtkinter.CTkLabel(toolbox_workspace_frame, textvariable=text_var, fg_color="#464646",
+                                             width=50)
+        value_label.pack(pady=10)
+
+        text_var.trace_add("write", lambda *args: round_value(2))
+
+        button = customtkinter.CTkButton(toolbox_workspace_frame, text="Zastosuj", command=power_transformation_fun)
+        button.pack()
 
 def contrast_fun():
-    bool_reset()
-    global contrastBool
-    contrastBool = True
+    global image
+    value = slider.get()
+    image = adjust_contrast(image, value)
+    image_update(image)
 
-    slider_pack(-128, 126, 255)
+def contrast():
+    global slider, text_var
+
+    for widget in toolbox_workspace_frame.winfo_children():
+        widget.destroy()
+
+    text_label = customtkinter.CTkLabel(toolbox_workspace_frame, text="Wybierz siłę kontrastu:")
+    text_label.pack(pady=20)
+
+    slider = customtkinter.CTkSlider(toolbox_workspace_frame, from_=-128, to=127, number_of_steps=256,
+                                     command=slider_event)
+    slider.pack()
+
+    text_var = tkinter.StringVar(value="0")
+
+    value_label = customtkinter.CTkLabel(toolbox_workspace_frame, textvariable=text_var, fg_color="#464646",
+                                         width=50)
+    value_label.pack(pady=10)
+
+    text_var.trace_add("write", lambda *args: round_value(0))
+
+    button = customtkinter.CTkButton(toolbox_workspace_frame, text="Zastosuj", command=contrast_fun)
+    button.pack()
 
 def histogram_fun():
-    bool_reset()
+    for widget in toolbox_workspace_frame.winfo_children():
+        widget.destroy()
+
     generate_histogram(image)
 
-# Funkcja do utworzenia menu rozwijanego z opcjami
+def blur_filter_fun():
+    global image
+    value = slider.get()
+    image = box_filter(image, value)
+    image_update(image)
+
+def blur_filter():
+    global slider, text_var
+
+    for widget in toolbox_workspace_frame.winfo_children():
+        widget.destroy()
+
+    text_label = customtkinter.CTkLabel(toolbox_workspace_frame, text="Wybierz rozmiar filtra:")
+    text_label.pack(pady=20)
+
+    slider = customtkinter.CTkSlider(toolbox_workspace_frame, from_=-0, to=10, number_of_steps=10,
+                                     command=slider_event)
+    slider.pack()
+
+    text_var = tkinter.StringVar(value="5")
+
+    value_label = customtkinter.CTkLabel(toolbox_workspace_frame, textvariable=text_var, fg_color="#464646",
+                                         width=50)
+    value_label.pack(pady=10)
+
+    text_var.trace_add("write", lambda *args: round_value(0))
+
+    button = customtkinter.CTkButton(toolbox_workspace_frame, text="Zastosuj", command=blur_filter_fun)
+    button.pack()
+
+def sharpening_filters(option):
+    global image
+
+    for widget in toolbox_workspace_frame.winfo_children():
+        widget.destroy()
+
+    filter = None
+
+    robertsHorizontal = [[0, 0, 0], [0, 1, -1], [0, 0, 0]]
+    robertsVertical = [[0, 0, 0], [0, 1, 0], [0, -1, 0]]
+    prewittHorizontal = [[1, 1, 1], [0, 0, 0], [-1, -1, -1]]
+    prewittVertical = [[1, 0, -1], [1, 0, -1], [1, 0, -1]]
+    sobelHorizontal = [[1, 2, 1], [0, 0, 0], [-1, -2, -1]]
+    sobelVertical = [[1, 0, -1], [2, 0, -2], [1, 0, -1]]
+    laplace = [[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]]
+
+    if option == "Filtr Robertsa poziomy":
+        filter = robertsHorizontal
+
+    if option == "Filtr Robertsa pionowy":
+        filter = robertsVertical
+
+    if option == "Filtr Prewitta poziomy":
+        filter = prewittHorizontal
+
+    if option == "Filtr Prewitta pionowy":
+        filter = prewittVertical
+
+    if option == "Filtr Sobela poziomy":
+        filter = sobelHorizontal
+
+    if option == "Filtr Sobela pionowy":
+        filter = sobelVertical
+
+    if option == "Filtr Laplace’a":
+        filter = laplace
+
+    image = filterFunction(image, filter)
+    image_update(image)
+
+def min_filter_fun():
+    global image
+    value = slider.get()
+    image = min_filter(image, value)
+    image_update(image)
+
+def max_filter_fun():
+    global image
+    value = slider.get()
+    image = max_filter(image, value)
+    image_update(image)
+
+def median_filter_fun():
+    global image
+    value = slider.get()
+    image = median_filter(image, value)
+    image_update(image)
+
+def static_filters(option):
+    global slider, text_var
+
+    for widget in toolbox_workspace_frame.winfo_children():
+        widget.destroy()
+
+    text_label = customtkinter.CTkLabel(toolbox_workspace_frame, text="Wybierz promień filtra:")
+    text_label.pack(pady=20)
+
+    slider = customtkinter.CTkSlider(toolbox_workspace_frame, from_=-0, to=10, number_of_steps=10,
+                                     command=slider_event)
+    slider.pack()
+
+    text_var = tkinter.StringVar(value="5")
+
+    value_label = customtkinter.CTkLabel(toolbox_workspace_frame, textvariable=text_var, fg_color="#464646",
+                                         width=50)
+    value_label.pack(pady=10)
+
+    text_var.trace_add("write", lambda *args: round_value(0))
+
+    if option == "Minimum":
+        button = customtkinter.CTkButton(toolbox_workspace_frame, text="Zastosuj", command=min_filter_fun)
+        button.pack()
+
+    if option == "Maksimum":
+        button = customtkinter.CTkButton(toolbox_workspace_frame, text="Zastosuj", command=max_filter_fun)
+        button.pack()
+
+    if option == "Średnia":
+        button = customtkinter.CTkButton(toolbox_workspace_frame, text="Zastosuj", command=median_filter_fun)
+        button.pack()
+
+def slider_event(value):
+    text_var.set(f"{slider.get()}")
+
+def round_value(round_value):
+    try:
+        rounded_value = round(float(text_var.get()), round_value)
+        text_var.set(str(rounded_value))
+    except ValueError:
+        pass
+
+def one_image_mode():
+    global canvas, image_frame, toolbox_workspace_frame
+
+    # Usunięcie poprzednich elementów
+    for widget in main_area.winfo_children():
+        widget.destroy()
+
+    # Grid
+    main_area.columnconfigure(0, weight=10)
+    main_area.columnconfigure(1, weight=1)
+    main_area.grid_rowconfigure(0, weight=10)
+    main_area.grid_rowconfigure(1, weight=1)
+
+    # Image frame
+    image_frame = customtkinter.CTkFrame(main_area, fg_color="#262626")
+    image_frame.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
+    image_frame.propagate(False)
+
+    # Toolbox frame
+    toolbox_frame = customtkinter.CTkFrame(main_area, fg_color="#464646")
+    toolbox_frame.grid(row=0, column=1, rowspan=2, sticky='nsew')
+    toolbox_label = customtkinter.CTkLabel(toolbox_frame, text="Przybornik")
+    toolbox_label.grid(row=0, column=0, sticky='ew')
+
+    toolbox_workspace_frame = customtkinter.CTkFrame(toolbox_frame, fg_color="#262626")
+    toolbox_workspace_frame.grid(row=1, column=0, padx=5, pady=5, sticky='nsew')
+    toolbox_frame.columnconfigure(0, weight=1)
+
+    toolbox_frame.rowconfigure(0, weight=0)
+    toolbox_frame.rowconfigure(1, weight=1)
+
+    # Button frame
+    button_frame = customtkinter.CTkFrame(main_area, fg_color="#535353")
+    button_frame.grid(row=1, column=0)
+
+    # Add image button
+    button = customtkinter.CTkButton(button_frame, text="Otwórz zdjęcie", command=open_file)
+    button.pack(expand=True)
+
+    # Image canvas
+    canvas = customtkinter.CTkCanvas(image_frame, bg="#262626", highlightthickness=0)
+    canvas.pack(expand=True)
+
+def image_update_two_mode_1(image):
+    # Getter image_frame size
+    frame_width = image1_frame.winfo_width()
+    frame_height = image1_frame.winfo_height()
+
+    # Sizing image to image_frame
+    image.thumbnail((frame_width, frame_height))
+
+    photo = ImageTk.PhotoImage(image)
+    canvas1.config(width=image.width, height=image.height)
+    canvas1.create_image(0, 0, anchor=tkinter.NW, image=photo)
+    canvas1.image = photo
+
+def image_update_two_mode_2(image):
+    # Getter image_frame size
+    frame_width = image2_frame.winfo_width()
+    frame_height = image2_frame.winfo_height()
+
+    # Sizing image to image_frame
+    image.thumbnail((frame_width, frame_height))
+
+    photo = ImageTk.PhotoImage(image)
+    canvas2.config(width=image.width, height=image.height)
+    canvas2.create_image(0, 0, anchor=tkinter.NW, image=photo)
+    canvas2.image = photo
+
+def open_file_two_mode_1():
+    global image1
+    file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg;*.jpeg;*.png;*.bmp;*.gif")])
+    if file_path:
+        image1 = Image.open(file_path)
+        image_update_two_mode_1(image1)
+
+def open_file_two_mode_2():
+    global image2
+    file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.jpg;*.jpeg;*.png;*.bmp;*.gif")])
+    if file_path:
+        image2 = Image.open(file_path)
+        image_update_two_mode_2(image2)
+
+def transparency_fun():
+    global image1
+    value = slider.get()
+    image1 = transparency(image1, image2, value)
+    image_update_two_mode_1(image1)
+
+def mixing_images(option):
+    global image1, image2, slider, text_var
+
+    for widget in toolbox_workspace_frame.winfo_children():
+        widget.destroy()
+
+    if option == "Suma":
+        image1 = additiveMode(image1, image2)
+        image_update_two_mode_1(image1)
+
+    if option == "Odejmowanie":
+        image1 = subtractiveMode(image1, image2)
+        image_update_two_mode_1(image1)
+
+    if option == "Różnica":
+        image1 = subtractiveMode(image1, image2)
+        image_update_two_mode_1(image1)
+
+    if option == "Mnożenie":
+        image1 = multiplyMode(image1, image2)
+        image_update_two_mode_1(image1)
+
+    if option == "Mnożenie odwrotności":
+        image1 = screenMode(image1, image2)
+        image_update_two_mode_1(image1)
+
+    if option == "Negacja":
+        image1 = negationMode(image1, image2)
+        image_update_two_mode_1(image1)
+
+    if option == "Ciemniejsze":
+        image1 = darkenMode(image1, image2)
+        image_update_two_mode_1(image1)
+
+    if option == "Jaśniejsze":
+        image1 = lightenMode(image1, image2)
+        image_update_two_mode_1(image1)
+
+    if option == "Wyłączenie":
+        image1 = exclusionMode(image1, image2)
+        image_update_two_mode_1(image1)
+
+    if option == "Nakładka":
+        image1 = overlayMode(image1, image2)
+        image_update_two_mode_1(image1)
+
+    if option == "Ostre światło":
+        image1 = hardLightMode(image1, image2)
+        image_update_two_mode_1(image1)
+
+    if option == "Łagodne światło":
+        image1 = softLightMode(image1, image2)
+        image_update_two_mode_1(image1)
+
+    if option == "Rozcieńczenie":
+        image1 = colorDodgeMode(image1, image2)
+        image_update_two_mode_1(image1)
+
+    if option == "Wypalanie":
+        image1 = colorBurnMode(image1, image2)
+        image_update_two_mode_1(image1)
+
+    if option == "Reflect mode":
+        image1 = reflectMode(image1, image2)
+        image_update_two_mode_1(image1)
+
+    if option == "Przezroczystość":
+        text_label = customtkinter.CTkLabel(toolbox_workspace_frame, text="Wybierz stopień przenikania:")
+        text_label.pack(pady=20)
+
+        slider = customtkinter.CTkSlider(toolbox_workspace_frame, from_=-0, to=1, number_of_steps=10,
+                                         command=slider_event)
+        slider.pack()
+
+        text_var = tkinter.StringVar(value="0.5")
+
+        value_label = customtkinter.CTkLabel(toolbox_workspace_frame, textvariable=text_var, fg_color="#464646",
+                                             width=50)
+        value_label.pack(pady=10)
+
+        text_var.trace_add("write", lambda *args: round_value(1))
+
+        button = customtkinter.CTkButton(toolbox_workspace_frame, text="Zastosuj", command=transparency_fun)
+        button.pack()
+
+def two_image_mode():
+    global canvas1, canvas2, image1_frame, image2_frame, toolbox_workspace_frame
+
+    # Usunięcie poprzednich elementów
+    for widget in main_area.winfo_children():
+        widget.destroy()
+
+    # Grid
+    main_area.columnconfigure(0, weight=4)
+    main_area.columnconfigure(1, weight=4)
+    main_area.columnconfigure(2, weight=1)
+    main_area.grid_rowconfigure(0, weight=10)
+    main_area.grid_rowconfigure(1, weight=1)
+
+    # First image frame
+    image1_frame = customtkinter.CTkFrame(main_area, fg_color="#262626")
+    image1_frame.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
+    image1_frame.propagate(False)
+
+    # Second image frame
+    image2_frame = customtkinter.CTkFrame(main_area, fg_color="#262626")
+    image2_frame.grid(row=0, column=1, padx=10, pady=10, sticky='nsew')
+    image2_frame.propagate(False)
+
+    # Toolbox frame
+    toolbox_frame = customtkinter.CTkFrame(main_area, fg_color="#464646")
+    toolbox_frame.grid(row=0, column=2, rowspan=2, sticky='nsew')
+    toolbox_label = customtkinter.CTkLabel(toolbox_frame, text="Przybornik")
+    toolbox_label.grid(row=0, column=0, sticky='ew')
+
+    toolbox_workspace_frame = customtkinter.CTkFrame(toolbox_frame, fg_color="#262626")
+    toolbox_workspace_frame.grid(row=1, column=0, padx=5, pady=5, sticky='nsew')
+    toolbox_frame.columnconfigure(0, weight=1)
+
+    toolbox_frame.rowconfigure(0, weight=0)
+    toolbox_frame.rowconfigure(1, weight=1)
+
+    # First button frame
+    button1_frame = customtkinter.CTkFrame(main_area, fg_color="#535353")
+    button1_frame.grid(row=1, column=0)
+
+    # Second button frame
+    button2_frame = customtkinter.CTkFrame(main_area, fg_color="#535353")
+    button2_frame.grid(row=1, column=1)
+
+    # Add first image button
+    button1 = customtkinter.CTkButton(button1_frame, text="Otwórz zdjęcie", command=open_file_two_mode_1)
+    button1.pack(expand=True)
+
+    # Add second image button
+    button2 = customtkinter.CTkButton(button2_frame, text="Otwórz zdjęcie", command=open_file_two_mode_2)
+    button2.pack(expand=True)
+
+    # First image canvas
+    canvas1 = customtkinter.CTkCanvas(image1_frame, bg="#262626", highlightthickness=0)
+    canvas1.pack(expand=True)
+
+    # Second image canvas
+    canvas2 = customtkinter.CTkCanvas(image2_frame, bg="#262626", highlightthickness=0)
+    canvas2.pack(expand=True)
+
+# Drop down menu function
 def create_dropdown_menu(menu, options, command):
     for option in options:
         menu.add_command(label=option, command=lambda opt=option: command(opt))
 
-def slider_event(value):
-    if powerTransformationBool:
-        label.configure(text=round(value, 2))
+customtkinter.set_appearance_mode("dark")
 
-    elif contrastBool:
-        label.configure(text=round(value))
+app = customtkinter.CTk()
+app.geometry("1280x720")
+app.title("Edytor obrazów")
 
-    else:
-        label.configure(text=value)
+menu = tkinter.Menu(app)
 
-def slider_pack(config_from=0, config_to=100, config_steps=100):
-    label.pack()
-    slider.configure()
-    slider.configure(from_=config_from, to=config_to, number_of_steps=config_steps)
-    slider.pack()
-    apply_button.pack(pady=10)
-
-def slider_unpack():
-    label.pack_forget()
-    slider.pack_forget()
-    apply_button.pack_forget()
-
-def get_Value():
-    value = slider.get()
-
-    if rozjasnienieBool:
-        image_update(rozjasnienie(image, value))
-
-    if przyciemnienieBool:
-        image_update(przyciemnienie(image, value))
-
-    if powerTransformationBool:
-        image_update(potegowa(image, value))
-
-    if contrastBool:
-        image_update(adjust_contrast(image, value))
-
-
-# Główne menu
-menu = tk.Menu(app)
-
-# Menu "Plik"
-file_menu = tk.Menu(menu, tearoff=0)
+# Plik menu
+file_menu = tkinter.Menu(menu, tearoff=0)
 menu.add_cascade(label="Plik", menu=file_menu)
-file_menu.add_command(label="Otwórz plik", command=open_file)
+# file_menu.add_command(label="Otwórz plik")
 file_menu.add_command(label="Zapisz plik", command=save_file)
 
-# Menu "Efekty"
-effects_menu = tk.Menu(menu, tearoff=0)
+# Edycja menu
+edit_menu = tkinter.Menu(menu, tearoff=0)
+menu.add_cascade(label="Edycja", menu=edit_menu)
+edit_menu.add_command(label="Cofnij zmiany")
+edit_menu.add_command(label="Przywróć zmiany")
+
+# Tryby menu
+modes_menu = tkinter.Menu(menu, tearoff=0)
+menu.add_cascade(label="Tryby", menu=modes_menu)
+modes_menu.add_command(label="Tryb jednego obrazka", command=one_image_mode)
+modes_menu.add_command(label="Tryb mieszania dwóch obrazków", command=two_image_mode)
+
+# Efekty menu
+effects_menu = tkinter.Menu(menu, tearoff=0)
 menu.add_cascade(label="Efekty", menu=effects_menu)
 
-# Menu rozwijane "Transformacja liniowa"
-linear_options_menu = tk.Menu(effects_menu, tearoff=0)
-effects_menu.add_cascade(label="Transformacja liniowa", menu=linear_options_menu)
-linear_options = ["Rozjaśnienie", "Przyciemnienie", "Negatyw"]
-create_dropdown_menu(linear_options_menu, linear_options, linear_transformation)
+# Transformacja liniowa
+mixing_options_menu = tkinter.Menu(effects_menu, tearoff=0)
+effects_menu.add_cascade(label="Transformacja liniowa", menu=mixing_options_menu)
+mixing_options = ["Rozjaśnienie", "Przyciemnienie", "Negatyw"]
+create_dropdown_menu(mixing_options_menu, mixing_options, linear_transformation)
 
-# Menu rozwijane "Transformacja potęgowa"
-power_options_menu = tk.Menu(effects_menu, tearoff=0)
-effects_menu.add_cascade(label="Transformacja potęgowa", menu=power_options_menu)
+# Transformacja potęgowa
+sharpening_options_menu = tkinter.Menu(effects_menu, tearoff=0)
+effects_menu.add_cascade(label="Transformacja potęgowa", menu=sharpening_options_menu)
 power_options = ["Rozjaśnienie", "Przyciemnienie"]
-create_dropdown_menu(power_options_menu, power_options, power_transformation)
-
-# Menu rozwijane "Mieszanie dwóch obrazów"
-mixing_options_menu = tk.Menu(effects_menu, tearoff=0)
-effects_menu.add_cascade(label="Mieszanie dwóch obrazów", menu=mixing_options_menu)
-power_options = ["Suma", "Odejmowanie", "Odejmowanie", "Różnica", "Mnożenie", "Mnożenie odwrotności", "Negacja", "Ciemniejsze"
-                 , "Jaśniejsze", "Wyłączenie", "Nakładka", "Ostre światło", "Łagodne światło", "Wypalanie", "Reflect mode", "Przezroczystość"]
-create_dropdown_menu(mixing_options_menu, power_options, power_transformation)
+create_dropdown_menu(sharpening_options_menu, power_options, power_transformation)
 
 # Kontrast
-effects_menu.add_command(label="Kontrast", command=contrast_fun)
+effects_menu.add_command(label="Kontrast", command=contrast)
 
 # Histogram
 effects_menu.add_command(label="Histogram", command=histogram_fun)
 
+# Filtr rozmywający
+effects_menu.add_command(label="Filtr rozmywający", command=blur_filter)
+
+# Filtr wyostrzający
+sharpening_options_menu = tkinter.Menu(effects_menu, tearoff=0)
+effects_menu.add_cascade(label="Filtr wyostrzający", menu=sharpening_options_menu)
+sharpening_options = ["Filtr Robertsa poziomy", "Filtr Robertsa pionowy",
+                    "Filtr Prewitta poziomy", "Filtr Prewitta pionowy",
+                    "Filtr Sobela poziomy", "Filtr Sobela pionowy",
+                    "Filtr Laplace’a"]
+create_dropdown_menu(sharpening_options_menu, sharpening_options, sharpening_filters)
+
+# Transformacja liniowa
+mixing_options_menu = tkinter.Menu(effects_menu, tearoff=0)
+effects_menu.add_cascade(label="Filtry statyczne", menu=mixing_options_menu)
+mixing_options = ["Minimum", "Maksimum", "Średnia"]
+create_dropdown_menu(mixing_options_menu, mixing_options, static_filters)
+
+# Mieszanie dwóch obrazów
+mixing_options_menu = tkinter.Menu(effects_menu, tearoff=0)
+effects_menu.add_cascade(label="Mieszanie obrazów", menu=mixing_options_menu)
+mixing_options = ["Suma", "Odejmowanie", "Różnica", "Mnożenie", "Mnożenie odwrotności", "Negacja", "Ciemniejsze",
+                  "Jaśniejsze", "Wyłączenie", "Nakładka", "Ostre światło", "Łagodne światło", "Rozcieńczenie",
+                  "Wypalanie", "Reflect mode", "Przezroczystość"]
+create_dropdown_menu(mixing_options_menu, mixing_options, mixing_images)
+
 app.config(menu=menu)
 
-image_frame = tk.Frame(app, width=1000, height=720)
-image_frame.pack(side=tk.LEFT)
+# Ramka dla głównego obszaru aplikacji
+main_area = customtkinter.CTkFrame(app, fg_color="#535353")
+main_area.pack(fill=tkinter.BOTH, expand=True)
 
-canvas = tk.Canvas(image_frame, width=1000, height=720, bg="#1e1e1e", highlightthickness=0)
-canvas.pack()
-
-# Obszar po prawej stronie
-right_frame = customtkinter.CTkFrame(app, width=280, height=720)
-right_frame.pack(side=tk.RIGHT)
-
-# Label suwaka
-label = customtkinter.CTkLabel(right_frame, text="")
-
-# Suwak
-slider = customtkinter.CTkSlider(right_frame, command=slider_event)
-slider.set(0)
-
-# Przycisk zastosuj
-apply_button = customtkinter.CTkButton(right_frame, text="Zastosuj", command=get_Value)
-
+one_image_mode()
 
 app.mainloop()
