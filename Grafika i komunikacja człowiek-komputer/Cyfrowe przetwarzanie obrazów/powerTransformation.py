@@ -1,7 +1,5 @@
 from PIL import Image
 
-powerTransformationBool = False
-
 def potegowa(image, gamma):
     resultImage = Image.new("RGB", (image.width, image.height))
 
