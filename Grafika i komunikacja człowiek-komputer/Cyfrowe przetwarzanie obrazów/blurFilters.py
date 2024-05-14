@@ -4,7 +4,7 @@ def box_filter(image, size):
     width, height = image.size
     filtered_image = Image.new("RGB", (width, height))
 
-    half_size = size // 2
+    half_size = int(size) // 2
 
     for x in range(width):
         for y in range(height):
@@ -25,8 +25,4 @@ def box_filter(image, size):
 
             filtered_image.putpixel((x, y), (r_avg, g_avg, b_avg))
 
-    filtered_image.show()
-
-image = Image.open("Images/bialystok.jpg")
-
-box_filter(image, 3)
+    return filtered_image
