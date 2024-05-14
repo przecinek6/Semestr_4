@@ -6,6 +6,8 @@ def resizeImage(image1, image2):
     return image1.resize((width, height)), image2.resize((width, height))
 
 def additiveMode(image1, image2):
+    image1, image2 = resizeImage(image1, image2)
+
     resultImage = Image.new("RGB", (image1.width, image1.height))
 
     for x in range(image1.width):
@@ -20,9 +22,11 @@ def additiveMode(image1, image2):
 
             resultImage.putpixel((x, y), tuple(blended_pixel))
 
-    resultImage.show()
+    return resultImage
 
 def subtractiveMode(image1, image2):
+    image1, image2 = resizeImage(image1, image2)
+
     resultImage = Image.new("RGB", (image1.width, image1.height))
 
     for x in range(image1.width):
@@ -37,9 +41,11 @@ def subtractiveMode(image1, image2):
 
             resultImage.putpixel((x, y), tuple(blended_pixel))
 
-    resultImage.show()
+    return resultImage
 
 def differenceMode(image1, image2):
+    image1, image2 = resizeImage(image1, image2)
+
     resultImage = Image.new("RGB", (image1.width, image1.height))
 
     for x in range(image1.width):
@@ -54,9 +60,11 @@ def differenceMode(image1, image2):
 
             resultImage.putpixel((x, y), tuple(blended_pixel))
 
-    resultImage.show()
+    return resultImage
 
 def multiplyMode(image1, image2):
+    image1, image2 = resizeImage(image1, image2)
+
     resultImage = Image.new("RGB", (image1.width, image1.height))
 
     for x in range(image1.width):
@@ -71,9 +79,11 @@ def multiplyMode(image1, image2):
 
             resultImage.putpixel((x, y), tuple(blended_pixel))
 
-    resultImage.show()
+    return resultImage
 
 def screenMode(image1, image2):
+    image1, image2 = resizeImage(image1, image2)
+
     resultImage = Image.new("RGB", (image1.width, image1.height))
 
     for x in range(image1.width):
@@ -88,9 +98,11 @@ def screenMode(image1, image2):
 
             resultImage.putpixel((x, y), tuple(blended_pixel))
 
-    resultImage.show()
+    return resultImage
 
 def negationMode(image1, image2):
+    image1, image2 = resizeImage(image1, image2)
+
     resultImage = Image.new("RGB", (image1.width, image1.height))
 
     for x in range(image1.width):
@@ -105,9 +117,11 @@ def negationMode(image1, image2):
 
             resultImage.putpixel((x, y), tuple(blended_pixel))
 
-    resultImage.show()
+    return resultImage
 
 def darkenMode(image1, image2):
+    image1, image2 = resizeImage(image1, image2)
+
     resultImage = Image.new("RGB", (image1.width, image1.height))
 
     for x in range(image1.width):
@@ -125,9 +139,11 @@ def darkenMode(image1, image2):
 
             resultImage.putpixel((x, y), tuple(blended_pixel))
 
-    resultImage.show()
+    return resultImage
 
 def lightenMode(image1, image2):
+    image1, image2 = resizeImage(image1, image2)
+
     resultImage = Image.new("RGB", (image1.width, image1.height))
 
     for x in range(image1.width):
@@ -145,9 +161,11 @@ def lightenMode(image1, image2):
 
             resultImage.putpixel((x, y), tuple(blended_pixel))
 
-    resultImage.show()
+    return resultImage
 
 def exclusionMode(image1, image2):
+    image1, image2 = resizeImage(image1, image2)
+
     resultImage = Image.new("RGB", (image1.width, image1.height))
 
     for x in range(image1.width):
@@ -162,9 +180,11 @@ def exclusionMode(image1, image2):
 
             resultImage.putpixel((x, y), tuple(blended_pixel))
 
-    resultImage.show()
+    return resultImage
 
 def overlayMode(image1, image2):
+    image1, image2 = resizeImage(image1, image2)
+
     resultImage = Image.new("RGB", (image1.width, image1.height))
 
     for x in range(image1.width):
@@ -182,9 +202,11 @@ def overlayMode(image1, image2):
 
             resultImage.putpixel((x, y), tuple(blended_pixel))
 
-    resultImage.show()
+    return resultImage
 
 def hardLightMode(image1, image2):
+    image1, image2 = resizeImage(image1, image2)
+
     resultImage = Image.new("RGB", (image1.width, image1.height))
 
     for x in range(image1.width):
@@ -202,9 +224,11 @@ def hardLightMode(image1, image2):
 
             resultImage.putpixel((x, y), tuple(blended_pixel))
 
-    resultImage.show()
+    return resultImage
 
 def softLightMode(image1, image2):
+    image1, image2 = resizeImage(image1, image2)
+
     resultImage = Image.new("RGB", (image1.width, image1.height))
 
     for x in range(image1.width):
@@ -227,9 +251,11 @@ def softLightMode(image1, image2):
 
             resultImage.putpixel((x, y), tuple(blended_pixel))
 
-    resultImage.show()
+    return resultImage
 
 def colorDodgeMode(image1, image2):
+    image1, image2 = resizeImage(image1, image2)
+
     resultImage = Image.new("RGB", (image1.width, image1.height))
 
     for x in range(image1.width):
@@ -249,9 +275,11 @@ def colorDodgeMode(image1, image2):
 
             resultImage.putpixel((x, y), tuple(blended_pixel))
 
-    resultImage.show()
+    return resultImage
 
 def colorBurnMode(image1, image2):
+    image1, image2 = resizeImage(image1, image2)
+
     resultImage = Image.new("RGB", (image1.width, image1.height))
 
     for x in range(image1.width):
@@ -274,9 +302,11 @@ def colorBurnMode(image1, image2):
 
             resultImage.putpixel((x, y), tuple(blended_pixel))
 
-    resultImage.show()
+    return resultImage
 
 def reflectMode(image1, image2):
+    image1, image2 = resizeImage(image1, image2)
+
     resultImage = Image.new("RGB", (image1.width, image1.height))
 
     for x in range(image1.width):
@@ -296,9 +326,11 @@ def reflectMode(image1, image2):
 
             resultImage.putpixel((x, y), tuple(blended_pixel))
 
-    resultImage.show()
+    return resultImage
 
 def transparency(image1, image2, alpha):
+    image1, image2 = resizeImage(image1, image2)
+
     resultImage = Image.new("RGB", (image1.width, image1.height))
 
     for x in range(image1.width):
@@ -312,26 +344,4 @@ def transparency(image1, image2, alpha):
 
             resultImage.putpixel((x, y), tuple(blended_pixel))
 
-    resultImage.show()
-
-image1 = Image.open("Images/flower1.png")
-image2 = Image.open("Images/flower2.png")
-
-image1, image2 = resizeImage(image1, image2)
-
-# additiveMode(image1, image2)
-# subtractiveMode(image1, image2)
-# differenceMode(image1, image2)
-# multiplyMode(image1, image2)
-# screenMode(image1, image2)
-# negationMode(image1, image2)
-# darkenMode(image1, image2)
-# lightenMode(image1, image2)
-# exclusionMode(image1, image2)
-# overlayMode(image1, image2)
-# hardLightMode(image1, image2)
-# softLightMode(image1, image2)
-# colorDodgeMode(image1, image2)
-# colorBurnMode(image1, image2)
-# reflectMode(image1, image2)
-transparency(image1, image2, 0.1)
+    return resultImage
