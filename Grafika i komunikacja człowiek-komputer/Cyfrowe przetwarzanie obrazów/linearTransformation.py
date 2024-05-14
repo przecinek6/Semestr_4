@@ -1,8 +1,5 @@
 from PIL import Image
 
-rozjasnienieBool = False
-przyciemnienieBool = False
-
 def rozjasnienie(image, percent):
     resultImage = Image.new("RGB", (image.width, image.height))
 
