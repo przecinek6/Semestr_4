@@ -1,7 +1,5 @@
 from PIL import Image
 
-contrastBool = False
-
 def adjust_contrast(image, contrast):
     resultImage = Image.new("RGB", (image.width, image.height))
 
@@ -13,10 +11,13 @@ def adjust_contrast(image, contrast):
             for i in range(3):
                 v = pixel[i]
 
-                if contrast >= 0:
-                    adjusted_pixel[i] = int((127 / (127 - contrast)) * (v - contrast))
+                if contrast == 127:
+                    adjusted_pixel[i] = v
                 else:
-                    adjusted_pixel[i] = int(((127 + contrast) / 127) * (v - contrast))
+                    if contrast >= 0:
+                        adjusted_pixel[i] = int((127 / (127 - contrast)) * (v - contrast))
+                    else:
+                        adjusted_pixel[i] = int(((127 + contrast) / 127) * (v - contrast))
 
                 adjusted_pixel[i] = max(0, min(255, adjusted_pixel[i]))
 
