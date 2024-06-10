@@ -10,7 +10,7 @@ def var(x, last_x, e):
     else:
         return True
 
-def fun(uklad_rownan, e):
+def fun(uklad_rownan, wyrazy_wolne, e):
     x = [0, 0, 0]
     last_x = [10, 10, 10]
     counter = 0
@@ -21,9 +21,9 @@ def fun(uklad_rownan, e):
             if uklad_rownan[i][i] != 1:
                 tmp = uklad_rownan[i][i]
             uklad_rownan[i][j] = uklad_rownan[i][j] / tmp
-            if i != j and j != len(uklad_rownan[i]) - 1:
+            if i != j:
                 uklad_rownan[i][j] *= -1
-
+        wyrazy_wolne[i] = wyrazy_wolne[i] / tmp
 
     while var(x, last_x, e):
         counter += 1
@@ -31,8 +31,7 @@ def fun(uklad_rownan, e):
             last_x[i] = x[i]
 
         for i in range(len(uklad_rownan)):
-            sum = uklad_rownan[i][len(uklad_rownan)]
-
+            sum = wyrazy_wolne[i]
             for j in range(len(uklad_rownan)):
                 if i != j:
                     sum += uklad_rownan[i][j] * last_x[j]
@@ -41,11 +40,15 @@ def fun(uklad_rownan, e):
     return counter, x
 
 
-uklad_rownan = [[3, 1, 2, 5],
-                [1, -4, 1, -7],
-                [1, 2, 3, 2]]
+uklad_rownan = [[3, 1, 2],
+                [1, -4, 1],
+                [1, 2, 3]]
+
+wyrazy_wolne = [5, -7, 2]
+
 e = 0.000001
 
-i, x = fun(uklad_rownan, e)
+i, x = fun(uklad_rownan, wyrazy_wolne, e)
+
 print("Numer iteracji = ", i)
 print("Przybliżenie = ", x)
