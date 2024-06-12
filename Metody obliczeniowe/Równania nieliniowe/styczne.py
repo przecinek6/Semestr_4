@@ -21,7 +21,7 @@ def styczne(a, b, e):
 
     i = 1
     x = xn - (f(xn) / f1(xn))
-    while abs(f(x)) >= e or abs(x - xn) >= e:
+    while abs(f(x)) >= e and abs(x - xn) >= e:
         i += 1
         xn = x
         x = xn - (f(xn) / f1(xn))
