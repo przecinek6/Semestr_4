@@ -1,8 +1,8 @@
 def f(x):
-    return x**2 + x - 5
+    return x**2 + 4.1*x - 6.36
 
 def f1(x):
-    return 2*x + 1
+    return 2*x + 4.1
 
 def f2(x):
     return 2
@@ -29,8 +29,8 @@ def styczne(a, b, e):
     return i, x
 
 
-a = 1
-b = 2
+a = -4
+b = 5
 e = 0.01
 
 i, x = styczne(a, b, e)
